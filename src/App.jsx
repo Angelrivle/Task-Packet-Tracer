@@ -40,10 +40,6 @@ export default function App() {
   // Current packet in transit for the inspector
   const [currentPacketInfo, setCurrentPacketInfo] = useState(null);
 
-  // Animation frame ref
-  const animFrameRef = useRef(null);
-  const lastTimeRef = useRef(0);
-
   // Lookup helper
   const getDevice = useCallback((id) => DEVICES.find(d => d.id === id), []);
 
@@ -56,16 +52,14 @@ export default function App() {
     const steps = [];
     const srcSwitchId = src.connectedTo[0];
     const dstSwitchId = dst.connectedTo[0];
-
-    // Check if destination is on the same access switch or cross-switch
     const sameSwitch = srcSwitchId === dstSwitchId;
 
     if (!directPing) {
       // Step 1: ARP cache verification
       steps.push({
-        title: 'Verificación de Memoria Caché ARP en el Host Origen',
-        description: `${src.name} (${src.ip}) desea enviar un paquete a ${dst.name} (${dst.ip}). Consulta su tabla ARP local pero no encuentra la dirección física MAC de destino. Debe generar una consulta ARP Request.`,
-        protocol: 'ARP',
+        title: 'Verificación de Memoria Caché ARP en Host Origen',
+        description: `${src.name} (${src.ip}) desea transmitir a ${dst.name} (${dst.ip}). Al no tener la MAC destino en memoria caché, genera una consulta ARP Request en modo Difusión (Broadcast).`,
+        protocol: 'ARP Request',
         packet: {
           etherType: '0x0806',
           srcMac: src.mac,
@@ -73,13 +67,12 @@ export default function App() {
           srcIp: src.ip,
           dstIp: dst.ip,
           protocol: 'ARP Request (Broadcast)',
-          payloadDetail: `¿Quién tiene ${dst.ip}? Díselo a ${src.ip} (${src.mac})`,
+          payloadDetail: `¿Quién tiene ${dst.ip}? Responder a ${src.ip} (${src.mac})`,
         },
         packetsInTransit: [
           { id: 'p1', from: src.id, to: srcSwitchId, protocol: 'ARP-REQ', progress: 0 }
         ],
         onComplete: () => {
-          // Switch learns source MAC
           setMacTables(prev => {
             if (prev.some(e => e.mac === src.mac)) return prev;
             return [...prev, { mac: src.mac, port: `Fa0/${src.id.replace('PC-0', '').replace('PC-', '')}`, type: 'Dinámica' }];
@@ -91,8 +84,8 @@ export default function App() {
       const accessNeighbors = DEVICES.filter(d => d.connectedTo.includes(srcSwitchId) && d.id !== src.id);
       steps.push({
         title: `Difusión Broadcast (Flooding) por el Switch de Acceso (${srcSwitchId})`,
-        description: `El switch ${srcSwitchId} recibe la trama broadcast (MAC destino FF:FF:FF:FF:FF:FF). Como no es una trama dirigida a una MAC específica, la replica e inunda por todos los puertos activos de su segmento.`,
-        protocol: 'ARP',
+        description: `El switch ${srcSwitchId} recibe la trama broadcast (MAC destino FF:FF:FF:FF:FF:FF) y la replica por todos los puertos activos de su segmento.`,
+        protocol: 'ARP Flooding',
         packet: {
           etherType: '0x0806',
           srcMac: src.mac,
@@ -100,7 +93,7 @@ export default function App() {
           srcIp: src.ip,
           dstIp: dst.ip,
           protocol: 'ARP Broadcast Flooding',
-          payloadDetail: 'Replicación masiva por todos los puertos activos',
+          payloadDetail: 'Replicación en todos los puertos activos',
         },
         packetsInTransit: accessNeighbors.map((d, idx) => ({
           id: `bcast-${idx}`,
@@ -111,12 +104,12 @@ export default function App() {
         })),
       });
 
-      // Step 3: Propagation to SW-CORE (if needed)
+      // Step 3: Propagation to SW-CORE
       if (!sameSwitch || dstSwitchId === 'SW-CORE') {
         steps.push({
           title: 'Propagación del Broadcast hacia el Switch Principal (SW-CORE)',
-          description: `El broadcast atraviesa el enlace troncal (Trunk 10G Cat6A) hacia SW-CORE, el cual distribuye la solicitud hacia el Servidor, Router y el otro switch departamental.`,
-          protocol: 'ARP',
+          description: `El paquete atraviesa el enlace troncal 10G Cat6A hacia SW-CORE, distribuyéndose hacia el Servidor, Router y switch de acceso secundario.`,
+          protocol: 'ARP Trunk',
           packet: {
             etherType: '0x0806',
             srcMac: src.mac,
@@ -124,7 +117,7 @@ export default function App() {
             srcIp: src.ip,
             dstIp: dst.ip,
             protocol: 'ARP Core Broadcast',
-            payloadDetail: `Difusión a través del Backbone hacia el destino`,
+            payloadDetail: `Tránsito troncal hacia ${dst.id}`,
           },
           packetsInTransit: [
             { id: 'core-trunk', from: 'SW-CORE', to: dst.id === 'SRV-01' ? 'SRV-01' : dstSwitchId === 'SW-CORE' ? dst.id : dstSwitchId, protocol: 'ARP-REQ', progress: 0 }
@@ -135,8 +128,8 @@ export default function App() {
       // Step 4: Destination host receives ARP Request and recognizes its IP
       steps.push({
         title: `${dst.name} reconoce su dirección IP y genera ARP Reply (Unicast)`,
-        description: `El dispositivo ${dst.name} (${dst.ip}) compara la IP solicitada y confirma que es la suya (las demás computadoras descartaron el paquete en silencio). Guarda la MAC de ${src.id} en su propia tabla ARP y responde directamente (Unicast).`,
-        protocol: 'ARP',
+        description: `El host ${dst.name} (${dst.ip}) reconoce su propia dirección IP (los demás equipos descartaron el paquete). Guarda la MAC de ${src.id} en su tabla y responde con un ARP Reply Unicast directo.`,
+        protocol: 'ARP Reply',
         packet: {
           etherType: '0x0806',
           srcMac: dst.mac,
@@ -144,23 +137,22 @@ export default function App() {
           srcIp: dst.ip,
           dstIp: src.ip,
           protocol: 'ARP Reply (Unicast)',
-          payloadDetail: `Yo tengo ${dst.ip}, mi dirección física MAC es ${dst.mac}`,
+          payloadDetail: `Yo tengo ${dst.ip}, mi dirección MAC es ${dst.mac}`,
         },
         packetsInTransit: [
           { id: 'arp-rep-1', from: dst.id, to: dstSwitchId, protocol: 'ARP-REP', progress: 0 }
         ],
         onComplete: () => {
-          // Destination learns source in its ARP table
           setArpTables(prev => ({ ...prev, [dst.ip]: dst.mac }));
         }
       });
 
-      // Step 5: ARP Reply traveling back unicast
+      // Step 5: ARP Reply travels Unicast
       if (!sameSwitch) {
         steps.push({
-          title: `El Switch reenvía el ARP Reply de forma Unicast directa`,
-          description: `Como los switches intermedios ya aprendieron en sus tablas CAM por cuál puerto llegó ${src.mac}, el ARP Reply NO se inunda: viaja en línea recta hacia ${src.id}.`,
-          protocol: 'ARP',
+          title: `El Switch reenvía el ARP Reply de forma Unicast Directa`,
+          description: `Gracias a que los switches ya aprendieron la MAC de ${src.id} en sus tablas CAM, el paquete fluye directamente sin inundación broadcast.`,
+          protocol: 'ARP Unicast Forward',
           packet: {
             etherType: '0x0806',
             srcMac: dst.mac,
@@ -180,15 +172,15 @@ export default function App() {
       // Step 6: ARP Reply arrives at Source Host
       steps.push({
         title: `${src.name} recibe el ARP Reply y actualiza su Memoria Caché`,
-        description: `${src.name} recibe la MAC física de ${dst.name} (${dst.mac}) y la almacena en su memoria RAM (tabla ARP). A partir de este instante, cualquier comunicación futura será directa sin requerir más broadcasts.`,
-        protocol: 'ARP',
+        description: `${src.name} registra la MAC física de ${dst.name} (${dst.mac}) en su tabla ARP. A partir de este momento, las tramas de datos se enviarán directamente.`,
+        protocol: 'ARP Cache Updated',
         packet: {
           etherType: '0x0806',
           srcMac: dst.mac,
           dstMac: src.mac,
           srcIp: dst.ip,
           dstIp: src.ip,
-          protocol: 'ARP Cache Entry Added',
+          protocol: 'ARP Entry Added',
           payloadDetail: `Caché actualizada: ${dst.ip} -> ${dst.mac}`,
         },
         packetsInTransit: [
@@ -200,11 +192,11 @@ export default function App() {
       });
     }
 
-    // Ping Steps (ICMP Echo Request and Reply)
+    // Ping Steps
     steps.push({
-      title: `Envío de Trama de Datos: ICMP Echo Request (Ping) hacia ${dst.id}`,
-      description: `Ahora que la dirección MAC ya es conocida, ${src.name} encapsula el paquete ICMP Echo Request dentro de una trama Ethernet estándar con MAC destino ${dst.mac} y la envía a velocidad Gigabit.`,
-      protocol: 'ICMP',
+      title: `Envío de ICMP Echo Request (Ping) hacia ${dst.id}`,
+      description: `Con la MAC de destino resuelta, ${src.name} transmite el paquete ICMP Echo Request encapsulado en trama Ethernet directa hacia ${dst.mac}.`,
+      protocol: 'ICMP Echo Request',
       packet: {
         etherType: '0x0800',
         srcMac: src.mac,
@@ -212,7 +204,7 @@ export default function App() {
         srcIp: src.ip,
         dstIp: dst.ip,
         protocol: 'ICMP Echo Request (Type 8)',
-        payloadDetail: '32 bytes de datos de prueba, TTL=64',
+        payloadDetail: '32 bytes de datos, TTL=64',
       },
       packetsInTransit: [
         { id: 'icmp-req-1', from: src.id, to: srcSwitchId, protocol: 'ICMP-REQ', progress: 0 }
@@ -221,9 +213,9 @@ export default function App() {
 
     if (!sameSwitch) {
       steps.push({
-        title: `Conmutación de Paquete ICMP a través del Núcleo de Red (Core)`,
-        description: `La trama viaja a través de ${srcSwitchId} -> SW-CORE -> ${dstSwitchId} sin colisiones, verificando el CRC de cada trama para asegurar cero errores de transmisión.`,
-        protocol: 'ICMP',
+        title: `Conmutación de Paquete ICMP en Backbone de Red`,
+        description: `Tránsito a través de los switches de la topología sin colisiones ni demoras.`,
+        protocol: 'ICMP In Transit',
         packet: {
           etherType: '0x0800',
           srcMac: src.mac,
@@ -231,7 +223,7 @@ export default function App() {
           srcIp: src.ip,
           dstIp: dst.ip,
           protocol: 'ICMP In Transit',
-          payloadDetail: 'Tránsito troncal de alta velocidad 10G',
+          payloadDetail: 'Tránsito troncal 10G',
         },
         packetsInTransit: [
           { id: 'icmp-req-core', from: srcSwitchId, to: 'SW-CORE', protocol: 'ICMP-REQ', progress: 0 },
@@ -242,8 +234,8 @@ export default function App() {
 
     steps.push({
       title: `${dst.name} recibe el Ping y responde con ICMP Echo Reply`,
-      description: `El equipo destinatario ${dst.name} procesa el eco y transmite inmediatamente la confirmación de recepción (ICMP Echo Reply, Type 0).`,
-      protocol: 'ICMP',
+      description: `${dst.name} procesa la solicitud y retorna de inmediato la respuesta (ICMP Type 0).`,
+      protocol: 'ICMP Echo Reply',
       packet: {
         etherType: '0x0800',
         srcMac: dst.mac,
@@ -259,9 +251,9 @@ export default function App() {
     });
 
     steps.push({
-      title: `¡Comunicación Exitosa! Ping Completado con Éxito`,
-      description: `${src.name} ha recibido la respuesta. Estadísticas: 1 paquete transmitido, 1 recibido, 0% de pérdida, tiempo de ida y vuelta < 1ms. La red LAN opera con total integridad.`,
-      protocol: 'ICMP',
+      title: `¡Comunicación Exitosa! Ping Completado`,
+      description: `${src.name} ha recibido la confirmación. 1 paquete transmitido, 1 recibido, 0% pérdida, latencia RTT < 1ms.`,
+      protocol: 'ICMP Success',
       packet: {
         etherType: '0x0800',
         srcMac: dst.mac,
@@ -276,10 +268,10 @@ export default function App() {
       ],
       onComplete: () => {
         confetti({
-          particleCount: 50,
+          particleCount: 40,
           spread: 60,
           origin: { y: 0.8 },
-          colors: ['#38bdf8', '#34d399', '#a855f7']
+          colors: ['#ffffff', '#10b981', '#38bdf8']
         });
       }
     });
@@ -287,7 +279,6 @@ export default function App() {
     return steps;
   }, [sourceNode, destNode, getDevice]);
 
-  // Handle starting simulation
   const handleStartSimulation = (directPing = false) => {
     const steps = generateSteps(directPing);
     setSimulationSteps(steps);
@@ -328,7 +319,6 @@ export default function App() {
     }
   };
 
-  // Animation Loop for packet interpolation
   useEffect(() => {
     if (!isRunning || currentStepIndex < 0 || currentStepIndex >= simulationSteps.length) {
       return;
@@ -337,13 +327,12 @@ export default function App() {
     let progress = 0;
     let animId;
 
-    const animate = (timestamp) => {
+    const animate = () => {
       progress += 0.02 * speed;
       if (progress < 1) {
         setSimulationPackets(prev => prev.map(p => ({ ...p, progress })));
         animId = requestAnimationFrame(animate);
       } else {
-        // Step complete
         const currentStep = simulationSteps[currentStepIndex];
         if (currentStep && currentStep.onComplete) {
           currentStep.onComplete();
@@ -367,7 +356,6 @@ export default function App() {
     return () => cancelAnimationFrame(animId);
   }, [isRunning, currentStepIndex, simulationSteps, speed, stepMode]);
 
-  // Terminal simulated ping trigger
   const handleSimulatePingFromCLI = (srcId, dstId) => {
     setSourceNode(srcId);
     setDestNode(dstId);
@@ -375,16 +363,16 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col">
-      {/* Navigation Bar */}
+    <div className="min-h-screen bg-black text-neutral-100 flex flex-col font-sans selection:bg-neutral-800 selection:text-white">
+      {/* Navigation */}
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
-        {/* TAB 1: INTERACTIVE SIMULATOR */}
+        {/* TAB 1: SIMULATOR */}
         {activeTab === 'simulator' && (
-          <div className="space-y-6">
-            {/* Simulation Controls Header */}
+          <div className="space-y-4">
+            {/* Minimalist Controls */}
             <SimulationControls
               isRunning={isRunning}
               onStart={handleStartSimulation}
@@ -399,23 +387,21 @@ export default function App() {
               totalSteps={simulationSteps.length}
               currentStepIndex={currentStepIndex}
               onClearArpTables={handleClearArpTables}
-              hasArpEntry={Boolean(arpTables[destNode])}
             />
 
-            {/* Interactive Network Topology Map */}
+            {/* Topology Map */}
             <NetworkTopology
               sourceNode={sourceNode}
               setSourceNode={setSourceNode}
               destNode={destNode}
               setDestNode={setDestNode}
-              currentStep={currentStepIndex}
               simulationPackets={simulationPackets}
               onSelectDeviceForTerminal={setActiveTerminalDevice}
               activeDeviceDetails={activeDeviceDetails}
               setActiveDeviceDetails={setActiveDeviceDetails}
             />
 
-            {/* Live Packet & Tables Inspector */}
+            {/* Packet & Tables Inspector */}
             <PacketInspector
               currentPacketInfo={currentPacketInfo}
               activeDevice={getDevice(sourceNode)}
@@ -425,26 +411,26 @@ export default function App() {
           </div>
         )}
 
-        {/* TAB 2: PROTOCOLO ARP */}
+        {/* TAB 2: ARP THEORY */}
         {activeTab === 'arp-theory' && <ArpTheory />}
 
-        {/* TAB 3: COMPARATIVE TABLE */}
+        {/* TAB 3: COMPARATIVE */}
         {activeTab === 'comparative' && <ComparativeTable />}
 
-        {/* TAB 4: REAL HARDWARE */}
+        {/* TAB 4: HARDWARE */}
         {activeTab === 'hardware' && <HardwareCatalog />}
 
         {/* TAB 5: IP PLAN */}
         {activeTab === 'ip-plan' && <IpPlanTable />}
 
-        {/* TAB 6: SECURITY & ADMIN */}
+        {/* TAB 6: SECURITY */}
         {activeTab === 'security' && <SecurityAdmin />}
 
-        {/* TAB 7: PRINTABLE REPORT */}
+        {/* TAB 7: REPORT */}
         {activeTab === 'report' && <PrintableReport />}
       </main>
 
-      {/* Device CLI Terminal Modal */}
+      {/* CLI Terminal Modal */}
       {activeTerminalDevice && (
         <DeviceTerminal
           device={activeTerminalDevice}
@@ -453,12 +439,12 @@ export default function App() {
         />
       )}
 
-      {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950/80 py-6 mt-12 text-center text-xs text-slate-500 print:hidden">
+      {/* Minimal Footer */}
+      <footer className="border-t border-neutral-900 bg-black py-4 mt-8 text-center text-xs text-neutral-500 font-mono print:hidden">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>NetSim LAN Pro • Actividad Grupal de Redes LAN</span>
-          <span className="text-slate-600">
-            Diseñado para despliegue en Vercel • Cumple al 100% con los requerimientos académicos
+          <span>NETSIM // RED LAN 15 NODOS</span>
+          <span className="text-neutral-600">
+            Diseño minimalista optimizado para despliegue en Vercel
           </span>
         </div>
       </footer>

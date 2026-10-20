@@ -7,14 +7,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        cyber: {
-          dark: '#090d16',
-          card: '#0f172a',
-          border: '#1e293b',
-          accent: '#0284c7',
-          success: '#10b981',
-          warning: '#f59e0b',
+        brand: {
+          accent: '#ffffff',
+          dim: '#a3a3a3',
+          border: '#262626',
+          surface: '#0a0a0a',
+          card: '#121212',
         }
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        mono: ['"Fira Code"', 'ui-monospace', 'monospace'],
       }
     },
   },

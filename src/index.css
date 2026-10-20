@@ -4,38 +4,33 @@
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100 min-h-screen font-sans antialiased selection:bg-cyan-500 selection:text-slate-950;
+    @apply bg-black text-neutral-100 min-h-screen font-sans antialiased selection:bg-neutral-200 selection:text-black;
   }
 }
 
-/* Custom glow and scrollbars */
+/* Custom Minimalist Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 4px;
+  background: #262626;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #404040;
 }
 
-@keyframes pulseGlow {
-  0%, 100% {
-    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+/* Print optimizations */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
   }
-  50% {
-    box-shadow: 0 0 25px rgba(56, 189, 248, 0.8);
-  }
-}
-
-.glow-active {
-  animation: pulseGlow 2s infinite;
 }

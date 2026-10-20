@@ -1,5 +1,5 @@
 import React from 'react';
-import { Printer, Download, FileText, CheckCircle2, Award } from 'lucide-react';
+import { Printer, FileText } from 'lucide-react';
 import { DEVICES, COMPARISON_TABLE, NETWORK_MEDIA, ARP_EXPLANATION } from '../data/networkData';
 
 export default function PrintableReport() {
@@ -10,115 +10,116 @@ export default function PrintableReport() {
   return (
     <div className="space-y-6">
       {/* Action Bar (Hidden in Print) */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden">
+      <div className="bg-black border border-neutral-800 rounded-xl p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden">
         <div>
-          <h2 className="text-base font-bold text-slate-100 flex items-center space-x-2">
-            <FileText className="w-5 h-5 text-emerald-400" />
-            <span>Documento Formal de Entrega (Informe Académico Completo)</span>
+          <h2 className="text-sm font-bold text-white flex items-center space-x-2 font-mono">
+            <FileText className="w-4 h-4 text-neutral-400" />
+            <span>INFORME TÉCNICO FORMAL (ENTREGA ACADÉMICA)</span>
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Formato estructurado con todos los requerimientos de la rúbrica, listo para ser entregado o defendido.
+          <p className="text-xs text-neutral-400 mt-0.5">
+            Documento completo listo para imprimir o guardar en formato PDF para el docente.
           </p>
         </div>
 
         <button
           onClick={handlePrint}
-          className="flex items-center space-x-2 px-5 py-2.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold rounded-xl shadow-lg shadow-emerald-500/25 transition-all active:scale-95 text-xs sm:text-sm whitespace-nowrap"
+          className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-neutral-200 text-black font-semibold rounded-lg shadow-sm transition-all text-xs font-mono"
         >
-          <Printer className="w-4 h-4" />
+          <Printer className="w-3.5 h-3.5" />
           <span>Imprimir / Guardar como PDF</span>
         </button>
       </div>
 
-      {/* Printable Sheet (Standard A4 Paper Look) */}
-      <div className="bg-white text-slate-900 rounded-2xl p-8 sm:p-12 shadow-2xl border border-slate-200 max-w-5xl mx-auto print:p-0 print:border-none print:shadow-none print:rounded-none font-sans">
+      {/* Printable Sheet (Clean Minimalist White Sheet for PDF printing) */}
+      <div className="bg-white text-slate-900 rounded-xl p-8 sm:p-12 shadow-2xl border border-neutral-200 max-w-5xl mx-auto print:p-0 print:border-none print:shadow-none print:rounded-none font-sans">
+        
         {/* Cover / Header */}
-        <div className="border-b-2 border-slate-900 pb-6 mb-8 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="border-b-2 border-slate-900 pb-5 mb-8 flex flex-col sm:flex-row justify-between items-start gap-4">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-600 block">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-slate-600 font-mono block">
               ACTIVIDAD GRUPAL • INGENIERÍA EN TECNOLOGÍAS DE INFORMACIÓN (ITI)
             </span>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-950 mt-1">
-              INFORME TÉCNICO: DISEÑO, IMPLEMENTACIÓN Y SIMULACIÓN DE UNA RED LAN EMPRESARIAL
+              INFORME TÉCNICO: RED LAN EMPRESARIAL Y FUNCIONAMIENTO DE ARP
             </h1>
             <p className="text-xs text-slate-600 mt-1">
               Ejercicio Práctico: Armar una red LAN e investigar su funcionamiento completo
             </p>
           </div>
-          <div className="text-right text-xs text-slate-700 bg-slate-100 p-3 rounded-lg border border-slate-300 shrink-0">
-            <div><strong>Asignatura:</strong> Redes de Computadoras</div>
+          <div className="text-right text-xs text-slate-700 bg-slate-100 p-2.5 rounded border border-slate-300 shrink-0 font-mono">
             <div><strong>Topología:</strong> Estrella Jerárquica</div>
-            <div><strong>Nodos LAN:</strong> 15 Dispositivos Totales</div>
+            <div><strong>Nodos:</strong> 15 Dispositivos Totales</div>
+            <div><strong>Subred:</strong> 192.168.1.0/24</div>
           </div>
         </div>
 
         {/* Index of Topics */}
-        <div className="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs">
-          <h3 className="font-bold text-slate-900 mb-2 uppercase tracking-wider">Índice del Informe</h3>
+        <div className="mb-8 p-4 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+          <h3 className="font-bold text-slate-900 mb-2 uppercase tracking-wider font-mono text-[11px]">
+            Índice de Contenido
+          </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-slate-700">
-            <div>1. Resumen Ejecutivo y Planteamiento del Problema</div>
-            <div>2. Análisis de Necesidades y Topología de Red Seleccionada</div>
-            <div>3. Selección de Medios de Transmisión (Cableado Cat6/Cat6A)</div>
+            <div>1. Planteamiento del Problema y Justificación</div>
+            <div>2. Análisis de Necesidades y Topología de Red (Estrella Jerárquica)</div>
+            <div>3. Selección de Medios de Transmisión (Norma ANSI/TIA-568-C.2)</div>
             <div>4. Tabla Comparativa: Switch vs. Módem vs. Router</div>
             <div>5. Catálogo de Componentes de Mercado Real (Velocidad y Costos)</div>
             <div>6. Plan Maestro de Asignación de Direcciones IPv4 y Ethernet</div>
-            <div>7. Investigación y Funcionamiento Detallado del Protocolo ARP</div>
-            <div>8. Configuración de Equipos, Seguridad (Port-Security) y Mantenimiento</div>
-            <div>9. Conclusiones y Rúbrica de Cumplimiento</div>
+            <div>7. Investigación y Funcionamiento Detallado del Protocolo ARP (RFC 826)</div>
+            <div>8. Configuración de Seguridad Cisco IOS y Plan de Mantenimiento</div>
+            <div>9. Conclusiones</div>
           </div>
         </div>
 
-        {/* Section 1 */}
+        {/* Sections */}
         <div className="space-y-6 text-xs sm:text-sm text-slate-800 leading-relaxed">
+          {/* Section 1 */}
           <section>
-            <h2 className="text-base sm:text-lg font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2">
-              1. Resumen Ejecutivo y Planteamiento del Problema
+            <h2 className="text-base font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2 font-mono">
+              1. Planteamiento del Problema y Justificación
             </h2>
             <p>
-              El presente proyecto tiene como objetivo diseñar, configurar y simular una <strong>Red de Área Local (LAN - Local Area Network)</strong> corporativa de alto rendimiento para interconectar de forma segura y eficiente <strong>15 dispositivos de red</strong>: 1 Router de Borde (Default Gateway), 3 Switches (1 Switch de Distribución/Core y 2 Switches de Acceso departamental), 1 Servidor corporativo centralizado y 10 estaciones de trabajo (PCs).
+              El presente trabajo describe el diseño e implementación de una <strong>Red de Área Local (LAN)</strong> empresarial que interconecta de manera segura y eficiente <strong>15 dispositivos activos</strong>: 1 Router de Borde (Default Gateway), 3 Switches (1 Switch Core de Distribución y 2 Switches de Acceso departamental), 1 Servidor corporativo centralizado (DNS, Web y Archivos) y 10 computadoras personales de trabajo (PCs).
             </p>
             <p className="mt-2">
-              A diferencia de las simulaciones tradicionales y estáticas de Packet Tracer, este proyecto se ha desarrollado mediante un <strong>simulador interactivo web dedicado</strong> que permite observar de forma gráfica el flujo de tramas Ethernet a nivel de enlace de datos, la resolución dinámica de direcciones IP a MAC mediante el protocolo <strong>ARP (RFC 826)</strong> y las respuestas del protocolo <strong>ICMP</strong>.
+              En lugar de limitarse a diagramas estáticos de Packet Tracer, se diseñó e implementó un simulador web interactivo en tiempo real para visualizar con exactitud la propagación de tramas Ethernet, el proceso de difusión broadcast del protocolo <strong>ARP (RFC 826)</strong> y el flujo bidireccional del protocolo <strong>ICMP (Ping)</strong>.
             </p>
           </section>
 
           {/* Section 2 */}
           <section>
-            <h2 className="text-base sm:text-lg font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2">
+            <h2 className="text-base font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2 font-mono">
               2. Análisis de Necesidades y Topología de Red
             </h2>
             <p>
-              <strong>Elección de Topología:</strong> Se implementó una <strong>topología en Estrella Jerárquica (Tree / Hierarchical Star)</strong> dividida en dos capas funcionales:
+              <strong>Topología Seleccionada: Estrella Jerárquica (Hierarchical Star).</strong>
             </p>
             <ul className="list-disc list-inside mt-2 space-y-1 pl-2">
               <li>
-                <strong>Capa de Distribución / Core:</strong> Switch centralizado (SW-CORE) que conecta con el Servidor corporativo y el Router de acceso a Internet.
+                <strong>Capa de Distribución / Core:</strong> Switch central SW-CORE que enlaza el Servidor local y el Router Gateway hacia Internet.
               </li>
               <li>
-                <strong>Capa de Acceso:</strong> Switch SW-ACC-01 (conecta las 5 estaciones del departamento de Ventas y Marketing) y Switch SW-ACC-02 (conecta las 5 estaciones de Finanzas y Recursos Humanos).
+                <strong>Capa de Acceso:</strong> Switch SW-ACC-01 (conecta las estaciones de trabajo de Ventas) y Switch SW-ACC-02 (conecta las estaciones de Finanzas y RRHH).
               </li>
             </ul>
             <p className="mt-2">
-              <strong>Justificación:</strong> La topología en estrella proporciona <em>aislamiento de fallos</em> (la avería de un cable de una PC no afecta al resto de la oficina), alta velocidad de conmutación sin colisiones (cada puerto del switch es un dominio de colisión independiente), facilidad de mantenimiento y capacidad de crecimiento modular sin interrupciones del servicio.
+              <strong>Justificación:</strong> La topología en estrella proporciona aislamiento de fallas de cableado (la avería en una PC no interrumpe el resto de la red), microsegmentación de dominios de colisión en cada puerto del switch y alta escalabilidad modular.
             </p>
           </section>
 
           {/* Section 3 */}
           <section>
-            <h2 className="text-base sm:text-lg font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2">
+            <h2 className="text-base font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2 font-mono">
               3. Medios de Transmisión Físicos (Cableado Estructurado)
             </h2>
-            <p className="mb-2">
-              Cumpliendo con la norma internacional <strong>ANSI/TIA-568-C.2</strong> para cableado de telecomunicaciones en edificios comerciales, se seleccionaron los siguientes medios físicos:
-            </p>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border border-slate-300">
-                <thead className="bg-slate-100 border-b border-slate-300">
+                <thead className="bg-slate-100 border-b border-slate-300 font-mono">
                   <tr>
                     <th className="p-2 border-r border-slate-300">Medio Físico</th>
-                    <th className="p-2 border-r border-slate-300">Ubicación / Propósito</th>
-                    <th className="p-2 border-r border-slate-300">Ancho de Banda / Velocidad</th>
-                    <th className="p-2">Conector y Distancia Máx.</th>
+                    <th className="p-2 border-r border-slate-300">Uso en la Red</th>
+                    <th className="p-2 border-r border-slate-300">Velocidad / Ancho de Banda</th>
+                    <th className="p-2">Conector y Distancia</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -137,23 +138,23 @@ export default function PrintableReport() {
 
           {/* Section 4 */}
           <section className="break-before-page">
-            <h2 className="text-base sm:text-lg font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2">
-              4. Tabla Comparativa Exhaustiva: Switch vs. Módem vs. Router
+            <h2 className="text-base font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2 font-mono">
+              4. Tabla Comparativa: Switch vs. Módem vs. Router
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border border-slate-300">
-                <thead className="bg-slate-100 border-b border-slate-300 font-bold">
+                <thead className="bg-slate-100 border-b border-slate-300 font-bold font-mono">
                   <tr>
                     <th className="p-2 border-r border-slate-300 w-1/4">Característica</th>
-                    <th className="p-2 border-r border-slate-300 w-1/4 text-sky-800">Switch (Conmutador)</th>
-                    <th className="p-2 border-r border-slate-300 w-1/4 text-purple-800">Módem</th>
-                    <th className="p-2 w-1/4 text-amber-800">Router (Enrutador)</th>
+                    <th className="p-2 border-r border-slate-300 w-1/4">Switch</th>
+                    <th className="p-2 border-r border-slate-300 w-1/4">Módem</th>
+                    <th className="p-2 w-1/4">Router</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
                   {COMPARISON_TABLE.map((row, i) => (
                     <tr key={i}>
-                      <td className="p-2 font-semibold bg-slate-50 border-r border-slate-300">{row.feature}</td>
+                      <td className="p-2 font-semibold bg-slate-50 border-r border-slate-300 font-mono text-[11px]">{row.feature}</td>
                       <td className="p-2 border-r border-slate-300">{row.switch}</td>
                       <td className="p-2 border-r border-slate-300">{row.modem}</td>
                       <td className="p-2">{row.router}</td>
@@ -166,18 +167,18 @@ export default function PrintableReport() {
 
           {/* Section 5 */}
           <section>
-            <h2 className="text-base sm:text-lg font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2">
-              5. Catálogo de Componentes de Mercado Real (Modelos, Velocidades y Precios)
+            <h2 className="text-base font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2 font-mono">
+              5. Catálogo de Componentes de Mercado Real (Velocidad y Costos)
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border border-slate-300">
-                <thead className="bg-slate-100 border-b border-slate-300 font-bold">
+                <thead className="bg-slate-100 border-b border-slate-300 font-bold font-mono">
                   <tr>
-                    <th className="p-2 border-r border-slate-300">Dispositivo</th>
-                    <th className="p-2 border-r border-slate-300">Rol en la Red</th>
+                    <th className="p-2 border-r border-slate-300">Host ID</th>
+                    <th className="p-2 border-r border-slate-300">Rol</th>
                     <th className="p-2 border-r border-slate-300">Modelo Comercial</th>
-                    <th className="p-2 border-r border-slate-300">Velocidad de Transferencia</th>
-                    <th className="p-2">Costo Estimado</th>
+                    <th className="p-2 border-r border-slate-300">Velocidad / Interfaces</th>
+                    <th className="p-2">Precio USD</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -185,9 +186,9 @@ export default function PrintableReport() {
                     <tr key={i}>
                       <td className="p-2 font-bold font-mono border-r border-slate-300">{d.id}</td>
                       <td className="p-2 border-r border-slate-300">{d.role}</td>
-                      <td className="p-2 font-semibold border-r border-slate-300">{d.model}</td>
+                      <td className="p-2 border-r border-slate-300 font-semibold">{d.model}</td>
                       <td className="p-2 font-mono border-r border-slate-300">{d.marketSpeed}</td>
-                      <td className="p-2 font-mono text-emerald-800 font-bold">{d.marketPrice}</td>
+                      <td className="p-2 font-mono font-bold">{d.marketPrice}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -197,17 +198,17 @@ export default function PrintableReport() {
 
           {/* Section 6 */}
           <section className="break-before-page">
-            <h2 className="text-base sm:text-lg font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2">
+            <h2 className="text-base font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2 font-mono">
               6. Plan Maestro de Asignación de Direcciones IPv4 y Ethernet
             </h2>
-            <p className="mb-2">
-              <strong>Espacio Lógico:</strong> Red Privada <code>192.168.1.0/24</code> (Máscara <code>255.255.255.0</code>). Puerta de Enlace (Gateway): <code>192.168.1.1</code>. Servidor DNS: <code>192.168.1.10</code>.
+            <p className="mb-2 font-mono text-xs">
+              Espacio Lógico: 192.168.1.0/24 | Máscara: 255.255.255.0 | Gateway: 192.168.1.1 | DNS: 192.168.1.10
             </p>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border border-slate-300">
-                <thead className="bg-slate-100 border-b border-slate-300 font-bold font-mono">
+              <table className="w-full text-left text-xs border border-slate-300 font-mono">
+                <thead className="bg-slate-100 border-b border-slate-300 font-bold">
                   <tr>
-                    <th className="p-2 border-r border-slate-300">Host ID</th>
+                    <th className="p-2 border-r border-slate-300">Dispositivo</th>
                     <th className="p-2 border-r border-slate-300">Dirección MAC (Capa 2)</th>
                     <th className="p-2 border-r border-slate-300">Dirección IPv4 (Capa 3)</th>
                     <th className="p-2 border-r border-slate-300">Máscara</th>
@@ -215,15 +216,15 @@ export default function PrintableReport() {
                     <th className="p-2">Método</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 font-mono">
+                <tbody className="divide-y divide-slate-200">
                   {DEVICES.map((d, i) => (
                     <tr key={i}>
                       <td className="p-2 font-bold border-r border-slate-300">{d.id}</td>
-                      <td className="p-2 text-slate-700 border-r border-slate-300">{d.mac}</td>
-                      <td className="p-2 text-blue-800 font-bold border-r border-slate-300">{d.ip}</td>
+                      <td className="p-2 border-r border-slate-300">{d.mac}</td>
+                      <td className="p-2 font-bold border-r border-slate-300 text-blue-900">{d.ip}</td>
                       <td className="p-2 border-r border-slate-300">{d.mask}</td>
                       <td className="p-2 border-r border-slate-300">{d.type === 'router' ? 'N/A' : '192.168.1.1'}</td>
-                      <td className="p-2 font-sans">{d.type === 'pc' ? 'DHCP (Dinámica)' : 'Estática'}</td>
+                      <td className="p-2 font-sans">{d.type === 'pc' ? 'DHCP' : 'Estática'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -233,70 +234,64 @@ export default function PrintableReport() {
 
           {/* Section 7 */}
           <section>
-            <h2 className="text-base sm:text-lg font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2">
+            <h2 className="text-base font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2 font-mono">
               7. Explicación y Funcionamiento Detallado del Protocolo ARP (RFC 826)
             </h2>
-            <p>
-              El <strong>Protocolo de Resolución de Direcciones (ARP)</strong> es el mecanismo estándar mediante el cual un nodo de red determina la dirección de hardware (MAC) de otro nodo ubicado en el mismo segmento Ethernet cuando únicamente conoce su dirección IP lógica.
-            </p>
-            <div className="mt-3 space-y-2">
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                <strong>Paso 1: Consulta de la Caché Local.</strong> El host origen (ej. PC-01) ejecuta una búsqueda en su tabla ARP en memoria RAM (comando <code>arp -a</code>). Si la entrada ya existe, encapsula la trama y la transmite.
+            <div className="space-y-2 mt-2">
+              <div className="p-2 bg-slate-50 border border-slate-200 rounded">
+                <strong>1. Verificación de Caché:</strong> El emisor consulta su tabla ARP local (<code>arp -a</code>). Si la MAC no está presente, genera un paquete ARP Request.
               </div>
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                <strong>Paso 2: Generación del ARP Request (Broadcast).</strong> Si no existe, crea un paquete ARP con Opcode 1 (Request). En la trama Ethernet, coloca como MAC destino <code>FF:FF:FF:FF:FF:FF</code> (dirección de difusión general).
+              <div className="p-2 bg-slate-50 border border-slate-200 rounded">
+                <strong>2. Emisión Broadcast:</strong> La trama se envía con dirección MAC destino <code>FF:FF:FF:FF:FF:FF</code> (difusión general).
               </div>
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                <strong>Paso 3: Propagación e Inundación en el Switch.</strong> El switch de acceso recibe el broadcast, registra la MAC del emisor en su tabla CAM y replica la trama por todos sus puertos activos.
+              <div className="p-2 bg-slate-50 border border-slate-200 rounded">
+                <strong>3. Inundación en el Switch:</strong> El switch de acceso replica la trama por todos sus puertos activos excepto el de entrada.
               </div>
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                <strong>Paso 4: Filtrado por los Hosts.</strong> Todos los demás equipos reciben la trama; verifican la IP solicitada. Al no coincidir con su IP, descartan el paquete sin generar tráfico adicional.
+              <div className="p-2 bg-slate-50 border border-slate-200 rounded">
+                <strong>4. Filtrado en Hosts:</strong> Las computadoras con IP distinta descartan el paquete en silencio.
               </div>
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                <strong>Paso 5: ARP Reply (Unicast Directo).</strong> El equipo que posee la IP (ej. Servidor 192.168.1.10) responde con un paquete ARP Reply (Opcode 2) dirigido específicamente a la MAC de PC-01 con su dirección MAC física real.
+              <div className="p-2 bg-slate-50 border border-slate-200 rounded">
+                <strong>5. ARP Reply Unicast:</strong> El host con la IP solicitada responde de forma directa (Unicast) indicando su dirección física MAC.
               </div>
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
-                <strong>Paso 6: Actualización de Caché y Envío de Datos.</strong> PC-01 almacena la correspondencia en su tabla ARP y envía de inmediato los datos que tenía en cola (paquete ICMP Echo Request para el ping).
+              <div className="p-2 bg-slate-50 border border-slate-200 rounded">
+                <strong>6. Actualización y Transmisión:</strong> El origen registra la MAC en su tabla y envía la trama de datos retenida (ping ICMP).
               </div>
             </div>
           </section>
 
           {/* Section 8 */}
           <section>
-            <h2 className="text-base sm:text-lg font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2">
+            <h2 className="text-base font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2 font-mono">
               8. Configuración de Equipos, Seguridad y Plan de Mantenimiento
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <h3 className="font-bold text-slate-900 mb-1">Políticas de Seguridad Implementadas:</h3>
+                <h3 className="font-bold text-slate-900 mb-1 font-mono text-xs uppercase">Seguridad Aplicada:</h3>
                 <ul className="list-disc list-inside space-y-1 text-slate-700">
-                  <li><strong>Port-Security:</strong> Límite de 1 dirección MAC por puerto de acceso con modo <code>sticky</code>.</li>
-                  <li><strong>Deshabilitación de Puertos:</strong> Puertos no utilizados apagados (<code>shutdown</code>).</li>
+                  <li><strong>Port-Security:</strong> Límite de 1 MAC por puerto de acceso con modo <code>sticky</code>.</li>
+                  <li><strong>Deshabilitación de Puertos:</strong> Puertos sobrantes apagados (<code>shutdown</code>).</li>
                   <li><strong>Acceso Cifrado SSH v2:</strong> Prohibido Telnet; autenticación con llaves RSA 2048-bit.</li>
-                  <li><strong>Mitigación de ARP Spoofing:</strong> Dynamic ARP Inspection (DAI) y DHCP Snooping en switches.</li>
+                  <li><strong>Mitigación ARP:</strong> Dynamic ARP Inspection (DAI) y DHCP Snooping.</li>
                 </ul>
               </div>
               <div>
-                <h3 className="font-bold text-slate-900 mb-1">Mantenimiento y Administración:</h3>
+                <h3 className="font-bold text-slate-900 mb-1 font-mono text-xs uppercase">Mantenimiento:</h3>
                 <ul className="list-disc list-inside space-y-1 text-slate-700">
-                  <li><strong>Preventivo:</strong> Verificación mensual de UPS, control térmico a 20°C y limpieza de racks.</li>
-                  <li><strong>Respaldos:</strong> Copia automatizada semanal de archivos de configuración vía TFTP.</li>
-                  <li><strong>Correctivo:</strong> Switch de repuesto preconfigurado en stock frío (RTO &lt; 2 horas).</li>
+                  <li><strong>Preventivo:</strong> Verificación mensual de UPS APC 3000VA y climatización a 20°C.</li>
+                  <li><strong>Respaldos:</strong> Copia automatizada de <code>running-config</code> vía servidor TFTP.</li>
+                  <li><strong>Correctivo:</strong> Switch en frío preconfigurado para reemplazo en menos de 2 horas.</li>
                 </ul>
               </div>
             </div>
           </section>
 
           {/* Section 9 */}
-          <section className="border-t border-slate-300 pt-4">
-            <h2 className="text-base sm:text-lg font-bold text-slate-950 mb-2">
+          <section className="border-t border-slate-300 pt-3">
+            <h2 className="text-base font-bold text-slate-950 mb-1 font-mono">
               9. Conclusiones
             </h2>
             <p>
-              El desarrollo e implementación de este proyecto demostró de manera integral la importancia de una arquitectura en estrella jerárquica para una red LAN. A través del simulador interactivo desarrollado, se evidenció con total transparencia el comportamiento del protocolo ARP, demostrando que ninguna comunicación IP local puede concretarse sin la resolución previa de la dirección física MAC.
-            </p>
-            <p className="mt-2 text-slate-600 italic">
-              Este informe y su plataforma interactiva complementaria cumplen rigurosamente con todas las especificaciones de la actividad grupal.
+              El diseño e implementación de esta red demostró de manera empírica que la resolución de direcciones mediante el protocolo ARP es un eslabón fundamental para cualquier comunicación Ethernet. La plataforma web desarrollada sustituye con éxito simuladores cerrados como Cisco Packet Tracer, ofreciendo un entorno visual transparente, interactivo y accesible desde cualquier navegador.
             </p>
           </section>
         </div>
