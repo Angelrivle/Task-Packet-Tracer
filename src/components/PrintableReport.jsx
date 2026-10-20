@@ -1,38 +1,149 @@
-import React from 'react';
-import { Printer, FileText } from 'lucide-react';
+import React, { useState } from 'react';
+import { Download, FileText, FileSpreadsheet, Check, Loader2 } from 'lucide-react';
 import { DEVICES, COMPARISON_TABLE, NETWORK_MEDIA, ARP_EXPLANATION } from '../data/networkData';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 export default function PrintableReport() {
-  const handlePrint = () => {
-    window.print();
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
+
+  // Genera y descarga directamente el archivo PDF sin abrir la ventana de impresión
+  const handleDownloadPdf = async () => {
+    setIsGenerating(true);
+    setDownloadSuccess(false);
+
+    try {
+      const reportElem = document.getElementById('report-document-sheet');
+      if (!reportElem) return;
+
+      const canvas = await html2canvas(reportElem, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      let heightLeft = pdfHeight;
+      let position = 0;
+
+      // Primera página
+      pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight);
+      heightLeft -= pageHeight;
+
+      // Páginas adicionales si el documento es largo
+      while (heightLeft > 0) {
+        position -= pageHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pageHeight;
+      }
+
+      // Descarga directa del archivo en el navegador
+      pdf.save('Informe_Tecnico_Red_LAN_Actividad_Grupal.pdf');
+      setDownloadSuccess(true);
+      setTimeout(() => setDownloadSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      alert('Hubo un error al generar el PDF. Por favor intenta de nuevo.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   return (
     <div className="space-y-6">
-      {/* Action Bar (Hidden in Print) */}
-      <div className="bg-black border border-neutral-800 rounded-xl p-4 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4 print:hidden">
+      {/* Action Bar (Minimalist Dark) */}
+      <div className="bg-black border border-neutral-800 rounded-xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <h2 className="text-sm font-bold text-white flex items-center space-x-2 font-mono">
             <FileText className="w-4 h-4 text-neutral-400" />
-            <span>INFORME TÉCNICO FORMAL (ENTREGA ACADÉMICA)</span>
+            <span>INFORME TÉCNICO FORMAL & GUÍA DE EXPOSICIÓN</span>
           </h2>
           <p className="text-xs text-neutral-400 mt-0.5">
-            Documento completo listo para imprimir o guardar en formato PDF para el docente.
+            Descarga directa de los entregables para el profesor y la guía para los 3 integrantes.
           </p>
         </div>
 
-        <button
-          onClick={handlePrint}
-          className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-neutral-200 text-black font-semibold rounded-lg shadow-sm transition-all text-xs font-mono"
-        >
-          <Printer className="w-3.5 h-3.5" />
-          <span>Imprimir / Guardar como PDF</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Botón Descargar Word */}
+          <a
+            href="/Guia_Exposicion_3_Integrantes.docx"
+            download="Guia_Exposicion_3_Integrantes.docx"
+            className="flex items-center space-x-1.5 px-3.5 py-2 bg-neutral-900 hover:bg-neutral-800 text-neutral-200 border border-neutral-700 font-medium rounded-lg shadow-sm transition-all text-xs font-mono"
+            title="Descarga documento de Word con los temas divididos para 3 integrantes"
+          >
+            <Download className="w-3.5 h-3.5 text-blue-400" />
+            <span>Guía en Word (.docx)</span>
+          </a>
+
+          {/* Botón Descargar PDF Directo */}
+          <button
+            onClick={handleDownloadPdf}
+            disabled={isGenerating}
+            className="flex items-center space-x-2 px-4 py-2 bg-white hover:bg-neutral-200 text-black font-semibold rounded-lg shadow-sm transition-all text-xs font-mono disabled:opacity-50"
+          >
+            {isGenerating ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                <span>Generando PDF...</span>
+              </>
+            ) : downloadSuccess ? (
+              <>
+                <Check className="w-3.5 h-3.5 text-emerald-600" />
+                <span>¡Descargado!</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-3.5 h-3.5" />
+                <span>Descargar Informe PDF</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
-      {/* Printable Sheet (Clean Minimalist White Sheet for PDF printing) */}
-      <div className="bg-white text-slate-900 rounded-xl p-8 sm:p-12 shadow-2xl border border-neutral-200 max-w-5xl mx-auto print:p-0 print:border-none print:shadow-none print:rounded-none font-sans">
-        
+      {/* Guide Banner for 3 Team Members */}
+      <div className="bg-neutral-950 border border-neutral-800 rounded-xl p-4 text-xs font-mono">
+        <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-800">
+          <span className="font-bold text-white uppercase">
+            // REPARTO DE EXPOSICIÓN PARA LOS 3 INTEGRANTES (RESUMEN RÁPIDO)
+          </span>
+          <span className="text-neutral-500 text-[10px]">Documento Word disponible arriba</span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-neutral-300">
+          <div className="bg-black p-3 rounded border border-neutral-850">
+            <span className="text-cyan-400 font-bold block mb-1">INTEGRANTE 1</span>
+            <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
+              <strong>Tema:</strong> Topología en Estrella Jerárquica, cables Cat6/Cat6A y catálogo de hardware real (Router Cisco ISR 4331, 3 Switches Catalyst, Server Dell y 10 PCs).
+            </p>
+          </div>
+          <div className="bg-black p-3 rounded border border-neutral-850">
+            <span className="text-emerald-400 font-bold block mb-1">INTEGRANTE 2</span>
+            <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
+              <strong>Tema:</strong> Tabla comparativa (Switch Capa 2 vs Módem Capa 1 vs Router Capa 3) y Plan maestro de direccionamiento IP (192.168.1.0/24 estáticas y DHCP).
+            </p>
+          </div>
+          <div className="bg-black p-3 rounded border border-neutral-850">
+            <span className="text-amber-400 font-bold block mb-1">INTEGRANTE 3</span>
+            <p className="text-[11px] text-neutral-400 font-sans leading-relaxed">
+              <strong>Tema:</strong> Demostración en vivo en el simulador, explicación técnica del protocolo ARP (RFC 826 Broadcast/Unicast), ICMP Ping y seguridad Port-Security/DAI.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Printable Sheet (Clean Minimalist White Sheet for PDF generation) */}
+      <div 
+        id="report-document-sheet" 
+        className="bg-white text-slate-900 rounded-xl p-8 sm:p-12 shadow-2xl border border-neutral-200 max-w-5xl mx-auto font-sans"
+      >
         {/* Cover / Header */}
         <div className="border-b-2 border-slate-900 pb-5 mb-8 flex flex-col sm:flex-row justify-between items-start gap-4">
           <div>
@@ -137,7 +248,7 @@ export default function PrintableReport() {
           </section>
 
           {/* Section 4 */}
-          <section className="break-before-page">
+          <section>
             <h2 className="text-base font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2 font-mono">
               4. Tabla Comparativa: Switch vs. Módem vs. Router
             </h2>
@@ -197,7 +308,7 @@ export default function PrintableReport() {
           </section>
 
           {/* Section 6 */}
-          <section className="break-before-page">
+          <section>
             <h2 className="text-base font-bold text-slate-950 border-b border-slate-300 pb-1 mb-2 font-mono">
               6. Plan Maestro de Asignación de Direcciones IPv4 y Ethernet
             </h2>
