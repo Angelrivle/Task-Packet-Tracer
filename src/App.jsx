@@ -439,7 +439,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>NETSIM // RED LAN 15 NODOS</span>
           <span className="text-neutral-600">
-            Diseño minimalista optimizado para despliegue en Vercel
+            Packet Tracer Simulation & ARP/ICMP Learning Tool | v1.0.0 | © 2026
           </span>
         </div>
       </footer>
