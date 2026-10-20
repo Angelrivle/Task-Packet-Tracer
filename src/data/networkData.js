@@ -1,7 +1,7 @@
 // Datos completos de la red LAN, hardware del mercado, plan IP y topología
 
 export const DEVICES = [
-  // Router
+  // Router de Borde (Top Center)
   {
     id: 'R1',
     name: 'R1-GATEWAY',
@@ -16,11 +16,11 @@ export const DEVICES = [
     marketPrice: '$1,850 USD',
     connectedTo: ['SW-CORE'],
     x: 500,
-    y: 70,
+    y: 65,
     arpTable: {},
   },
 
-  // Switch Core / Distribución
+  // Switch Core / Distribución (Center Upper)
   {
     id: 'SW-CORE',
     name: 'SW-DIST-01 (Core)',
@@ -35,11 +35,11 @@ export const DEVICES = [
     marketPrice: '$920 USD',
     connectedTo: ['R1', 'SW-ACC-01', 'SW-ACC-02', 'SRV-01'],
     x: 500,
-    y: 200,
+    y: 185,
     macTable: [],
   },
 
-  // Servidor Corporativo
+  // Servidor Corporativo (Right of Core)
   {
     id: 'SRV-01',
     name: 'SRV-CORP-01',
@@ -53,12 +53,12 @@ export const DEVICES = [
     marketSpeed: 'Dual Gigabit Ethernet (2x 1 Gbps Broadcom)',
     marketPrice: '$2,450 USD',
     connectedTo: ['SW-CORE'],
-    x: 780,
-    y: 200,
+    x: 770,
+    y: 185,
     arpTable: {},
   },
 
-  // Switch de Acceso 1
+  // Switch de Acceso 1 (Left Lower)
   {
     id: 'SW-ACC-01',
     name: 'SW-ACC-01 (Área Ventas)',
@@ -72,12 +72,12 @@ export const DEVICES = [
     marketSpeed: '16 puertos 10/100/1000 Mbps + 2x SFP 1G',
     marketPrice: '$480 USD',
     connectedTo: ['SW-CORE', 'PC-01', 'PC-02', 'PC-03', 'PC-04', 'PC-05'],
-    x: 250,
-    y: 350,
+    x: 260,
+    y: 330,
     macTable: [],
   },
 
-  // Switch de Acceso 2
+  // Switch de Acceso 2 (Right Lower)
   {
     id: 'SW-ACC-02',
     name: 'SW-ACC-02 (Área Finanzas)',
@@ -91,12 +91,12 @@ export const DEVICES = [
     marketSpeed: '16 puertos 10/100/1000 Mbps + 2x SFP 1G',
     marketPrice: '$480 USD',
     connectedTo: ['SW-CORE', 'PC-06', 'PC-07', 'PC-08', 'PC-09', 'PC-10'],
-    x: 750,
-    y: 350,
+    x: 740,
+    y: 330,
     macTable: [],
   },
 
-  // PCs en Switch Acceso 1 (Ventas & Marketing)
+  // PCs en Switch Acceso 1 (Cluster Izquierdo - perfecta alineación horizontal y distribución simétrica)
   {
     id: 'PC-01',
     name: 'PC-01 (Ventas 1)',
@@ -106,12 +106,12 @@ export const DEVICES = [
     mac: '00:50:56:A1:01:01',
     role: 'Estación de Trabajo - Ejecutivo de Ventas',
     location: 'Planta Baja - Puesto V-01',
-    model: 'HP ProDesk 400 G7 MT / Intel i5 10ma Gen',
-    marketSpeed: 'Realtek Gigabit Ethernet (1 Gbps)',
+    model: 'HP ProDesk 400 G7 MT / Intel i5',
+    marketSpeed: 'Gigabit Ethernet (1 Gbps)',
     marketPrice: '$650 USD',
     connectedTo: ['SW-ACC-01'],
-    x: 80,
-    y: 500,
+    x: 60,
+    y: 490,
     arpTable: {},
   },
   {
@@ -123,12 +123,12 @@ export const DEVICES = [
     mac: '00:50:56:A1:01:02',
     role: 'Estación de Trabajo - Ejecutivo de Ventas',
     location: 'Planta Baja - Puesto V-02',
-    model: 'HP ProDesk 400 G7 MT / Intel i5 10ma Gen',
-    marketSpeed: 'Realtek Gigabit Ethernet (1 Gbps)',
+    model: 'HP ProDesk 400 G7 MT / Intel i5',
+    marketSpeed: 'Gigabit Ethernet (1 Gbps)',
     marketPrice: '$650 USD',
     connectedTo: ['SW-ACC-01'],
-    x: 165,
-    y: 530,
+    x: 160,
+    y: 490,
     arpTable: {},
   },
   {
@@ -140,12 +140,12 @@ export const DEVICES = [
     mac: '00:50:56:A1:01:03',
     role: 'Estación de Trabajo - Facturación',
     location: 'Planta Baja - Puesto V-03',
-    model: 'Dell OptiPlex 3080 / Intel i5 10ma Gen',
-    marketSpeed: 'Intel I219-LM 1 Gbps',
+    model: 'Dell OptiPlex 3080 / Intel i5',
+    marketSpeed: 'Gigabit Ethernet (1 Gbps)',
     marketPrice: '$680 USD',
     connectedTo: ['SW-ACC-01'],
-    x: 250,
-    y: 500,
+    x: 260,
+    y: 490,
     arpTable: {},
   },
   {
@@ -157,12 +157,12 @@ export const DEVICES = [
     mac: '00:50:56:A1:01:04',
     role: 'Estación de Trabajo - Diseño & Marketing',
     location: 'Planta Baja - Puesto M-01',
-    model: 'Dell OptiPlex 7090 / Intel i7 11ma Gen',
-    marketSpeed: 'Intel Ethernet 1 Gbps / PCIe',
+    model: 'Dell OptiPlex 7090 / Intel i7',
+    marketSpeed: 'Gigabit Ethernet (1 Gbps)',
     marketPrice: '$950 USD',
     connectedTo: ['SW-ACC-01'],
-    x: 335,
-    y: 530,
+    x: 360,
+    y: 490,
     arpTable: {},
   },
   {
@@ -175,15 +175,15 @@ export const DEVICES = [
     role: 'Estación de Trabajo - Atención al Público',
     location: 'Lobby Principal - Recepción',
     model: 'Lenovo ThinkCentre M70q Tiny',
-    marketSpeed: 'Intel I219-V Gigabit Ethernet (1 Gbps)',
+    marketSpeed: 'Gigabit Ethernet (1 Gbps)',
     marketPrice: '$590 USD',
     connectedTo: ['SW-ACC-01'],
-    x: 420,
-    y: 500,
+    x: 460,
+    y: 490,
     arpTable: {},
   },
 
-  // PCs en Switch Acceso 2 (Finanzas & Administración)
+  // PCs en Switch Acceso 2 (Cluster Derecho - perfecta alineación horizontal y distribución simétrica)
   {
     id: 'PC-06',
     name: 'PC-06 (Finanzas 1)',
@@ -194,11 +194,11 @@ export const DEVICES = [
     role: 'Estación de Trabajo - Analista Contable',
     location: 'Planta Alta - Oficina Finanzas',
     model: 'HP EliteDesk 800 G6 / Intel i7',
-    marketSpeed: 'Intel I219-LM Gigabit Ethernet (1 Gbps)',
+    marketSpeed: 'Gigabit Ethernet (1 Gbps)',
     marketPrice: '$890 USD',
     connectedTo: ['SW-ACC-02'],
-    x: 580,
-    y: 500,
+    x: 540,
+    y: 490,
     arpTable: {},
   },
   {
@@ -208,14 +208,14 @@ export const DEVICES = [
     ip: '192.168.1.107',
     mask: '255.255.255.0',
     mac: '00:50:56:B2:02:02',
-    role: 'Estación de Trabajo - Auditoría y Cobranzas',
+    role: 'Estación de Trabajo - Auditoría',
     location: 'Planta Alta - Oficina Finanzas',
     model: 'Dell OptiPlex 5090 / Intel i5',
-    marketSpeed: '1 Gbps Integrada RJ-45',
+    marketSpeed: 'Gigabit Ethernet (1 Gbps)',
     marketPrice: '$720 USD',
     connectedTo: ['SW-ACC-02'],
-    x: 665,
-    y: 530,
+    x: 640,
+    y: 490,
     arpTable: {},
   },
   {
@@ -225,14 +225,14 @@ export const DEVICES = [
     ip: '192.168.1.108',
     mask: '255.255.255.0',
     mac: '00:50:56:B2:02:03',
-    role: 'Estación de Trabajo - Nómina y Selección',
+    role: 'Estación de Trabajo - Nómina',
     location: 'Planta Alta - Oficina RRHH',
     model: 'Lenovo ThinkCentre Neo 50s',
-    marketSpeed: 'Gigabit LAN 1000 Mbps',
+    marketSpeed: 'Gigabit Ethernet (1 Gbps)',
     marketPrice: '$630 USD',
     connectedTo: ['SW-ACC-02'],
-    x: 750,
-    y: 500,
+    x: 740,
+    y: 490,
     arpTable: {},
   },
   {
@@ -242,14 +242,14 @@ export const DEVICES = [
     ip: '192.168.1.109',
     mask: '255.255.255.0',
     mac: '00:50:56:B2:02:04',
-    role: 'Estación de Trabajo - Capacitación y Personal',
+    role: 'Estación de Trabajo - Personal',
     location: 'Planta Alta - Oficina RRHH',
     model: 'Lenovo ThinkCentre Neo 50s',
-    marketSpeed: 'Gigabit LAN 1000 Mbps',
+    marketSpeed: 'Gigabit Ethernet (1 Gbps)',
     marketPrice: '$630 USD',
     connectedTo: ['SW-ACC-02'],
-    x: 835,
-    y: 530,
+    x: 840,
+    y: 490,
     arpTable: {},
   },
   {
@@ -262,11 +262,11 @@ export const DEVICES = [
     role: 'Estación de Trabajo - Gerencia General',
     location: 'Planta Alta - Despacho Ejecutivo',
     model: 'Dell Precision 3650 Workstation',
-    marketSpeed: 'Dual Gigabit NIC 1000 Mbps',
+    marketSpeed: 'Gigabit Ethernet (1 Gbps)',
     marketPrice: '$1,350 USD',
     connectedTo: ['SW-ACC-02'],
-    x: 920,
-    y: 500,
+    x: 940,
+    y: 490,
     arpTable: {},
   },
 ];
@@ -330,15 +330,15 @@ export const COMPARISON_TABLE = [
   },
   {
     feature: 'Dominio de Colisión',
-    switch: 'Microsegmenta la red: **Cada puerto es un dominio de colisión independiente** (Full Duplex).',
+    switch: 'Microsegmenta la red: Cada puerto es un dominio de colisión independiente (Full Duplex).',
     modem: 'Un solo dominio de colisión en el tramo de enlace físico.',
-    router: '**Cada puerto o interfaz es un dominio de colisión independiente**.',
+    router: 'Cada puerto o interfaz es un dominio de colisión independiente.',
   },
   {
     feature: 'Dominio de Broadcast',
-    switch: 'Por defecto, **todos los puertos pertenecen a un solo dominio de broadcast** (a menos que se configuren VLANs).',
+    switch: 'Por defecto, todos los puertos pertenecen a un solo dominio de broadcast (a menos que se configuren VLANs).',
     modem: 'Transparente / Transporta el tráfico del ISP sin segmentar broadcast.',
-    router: '**Rompe y aísla los dominios de broadcast**. No reenvía paquetes broadcast L2 por defecto.',
+    router: 'Rompe y aísla los dominios de broadcast. No reenvía paquetes broadcast L2 por defecto.',
   },
   {
     feature: 'Funciones de Seguridad / Servicios',
@@ -363,17 +363,17 @@ export const ARP_EXPLANATION = {
     {
       num: 1,
       title: 'Origen consulta su Memoria Caché ARP',
-      desc: 'Cuando un host (ej. PC-01 con IP 192.168.1.101) necesita enviar un paquete a otro equipo (ej. Servidor 192.168.1.10), primero verifica su tabla local ARP (`arp -a`). Si la dirección MAC de destino ya está almacenada en caché, empaqueta la trama directamente y la envía.',
+      desc: 'Cuando un host (ej. PC-01 con IP 192.168.1.101) necesita enviar un paquete a otro equipo (ej. Servidor 192.168.1.10), primero verifica su tabla local ARP (arp -a). Si la dirección MAC de destino ya está almacenada en caché, empaqueta la trama directamente y la envía.',
     },
     {
       num: 2,
       title: 'Caché vacía: Se genera un ARP Request (Broadcast)',
-      desc: 'Si la MAC no está en la tabla, el emisor genera un mensaje ARP Request. La trama Ethernet tiene como dirección MAC Destino `FF:FF:FF:FF:FF:FF` (Broadcast general). El mensaje pregunta: "¿Quién tiene la IP 192.168.1.10? Dígale a 192.168.1.101 en MAC 00:50:56:A1:01:01".',
+      desc: 'Si la MAC no está en la tabla, el emisor genera un mensaje ARP Request. La trama Ethernet tiene como dirección MAC Destino FF:FF:FF:FF:FF:FF (Broadcast general). El mensaje pregunta: "¿Quién tiene la IP 192.168.1.10? Dígale a 192.168.1.101 en MAC 00:50:56:A1:01:01".',
     },
     {
       num: 3,
       title: 'Inundación por el Switch (Flooding)',
-      desc: 'El Switch recibe la trama broadcast por el puerto de PC-01. El switch registra en su tabla CAM que la MAC de PC-01 está en ese puerto y, al ver la dirección de destino broadcast `FF:FF:FF:FF:FF:FF`, replica la trama por todos sus demás puertos activos.',
+      desc: 'El Switch recibe la trama broadcast por el puerto de PC-01. El switch registra en su tabla CAM que la MAC de PC-01 está en ese puerto y, al ver la dirección de destino broadcast FF:FF:FF:FF:FF:FF, replica la trama por todos sus demás puertos activos.',
     },
     {
       num: 4,
